@@ -39,6 +39,8 @@ cScheibe=500
 #Reibwert
 nu=0.3
 
+StartTemperaturScheibe=20
+
 #Funktion zur Bestimmen der Ringmasse auf dem der Klotz sitzt
 def masse(rInnen,radKlotz,bBrake):
 	#dichte 7.2 [g/cm3]
@@ -49,7 +51,26 @@ def masse(rInnen,radKlotz,bBrake):
 	VolRing=ARing*bBrake
 	mRing=VolRing*dichteBrake
 	return mRing
-	
+
+#Ansatz über geleistete Arbeit W=Fr*s = mcdT
+def friction_length(rMittelpunkt,Drehzahl,bremszeit):
+	#Ansatz über Kreisumfang und Anzahl der Umdrehungen innerhalb der Bremszeit
+	Umfang=2*pi*rMittelpunkt
+	#umrechung in U/s
+	UmdrehungenGesamt=(Drehzahl/60)*bremszeit
+	s=Umfang*UmdrehungenGesamt
+	return s
+
+def Reibkraft(p,Anpressflaeche,Reibwert):
+	Fn=p*Anpressflaeche
+	return Fn*Reibwert
+
+W=Reibkraft(pAnpress,AKlotz,nu)*friction_length(rInnen+radKlotz/2,n,bremszeit)
+m=masse(rInnen,radKlotz,bBrake)
+T=W/(m*cScheibe)+StartTemperaturScheibe
+print(T)
+
+
 
 
 
