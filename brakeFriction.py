@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import math
+from scipy import integrate
 
 pi=math.pi
 
@@ -57,15 +58,25 @@ def friction_length(rMittelpunkt,Drehzahl,bremszeit):
 	#Ansatz über Kreisumfang und Anzahl der Umdrehungen innerhalb der Bremszeit
 	Umfang=2*pi*rMittelpunkt
 	#umrechung in U/s
-	UmdrehungenGesamt=(Drehzahl/60)*bremszeit
-	s=Umfang*UmdrehungenGesamt
+	b=Drehzahl/60.0
+
+	#linear Abhängigkeit Drehzahl
+	m=-b/bremszeit
+	y=lambda x:m*x+b
+	u=integrate.quad(y,0,bremszeit)
+	s=Umfang*u[0]
+	
 	return s
 
 def Reibkraft(p,Anpressflaeche,Reibwert):
 	Fn=p*Anpressflaeche
 	return Fn*Reibwert
 
-W=Reibkraft(pAnpress,AKlotz,nu)*friction_length(rInnen+radKlotz/2,n,bremszeit)
+
+#n=linearAbnahme(2900,10,0)
+
+
+W=Reibkraft(pAnpress,AKlotz,nu)*friction_length(rInnen+radKlotz/2,n,5)
 m=masse(rInnen,radKlotz,bBrake)
 T=W/(m*cScheibe)+StartTemperaturScheibe
 print(T)
