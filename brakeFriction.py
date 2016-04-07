@@ -22,7 +22,7 @@ pAnpress=10e5
 
 #Dimension Scheibe [m] 
 rBrake=0.3
-bBrake=0.05
+bBrake=0.02
 
 #position klotz
 rInnen=0.1
