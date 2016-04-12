@@ -12,9 +12,10 @@ pi=math.pi
 
 #drehzahl u/min
 n=2000
+Pmotor=7.5 #[kW]
 
 #bremszeit [s]
-bremszeit=5
+bremszeit=10
 
 #Anpresskraft [N]
 #Fn=10000 
@@ -22,15 +23,15 @@ bremszeit=5
 pAnpress=10e5
 
 #Dimension Scheibe [m] 
-rBrake=0.3
-bBrake=0.02
+rBrake=0.1
+bBrake=8e-3
 
 #position klotz
-rInnen=0.1
+rInnen=50e-3
 
 #Klotz Reibfläche
-radKlotz=0.1
-tanKlotz=0.1
+radKlotz=38e-3
+tanKlotz=80e-3
 AKlotz=radKlotz*tanKlotz
 
 #Stoffwerte [J/kgK]
@@ -69,17 +70,32 @@ def friction_length(rMittelpunkt,Drehzahl,bremszeit):
 	return s
 
 def Reibkraft(p,Anpressflaeche,Reibwert):
-	Fn=p*Anpressflaeche
+	#Auf zwei Seiten der Scheibe in Kontakt
+	Fn=2*p*Anpressflaeche
 	return Fn*Reibwert
+
+def CrossCheck(Pmotor,Drehzahl,bremszeit):
+
+	Mbr=(Pmotor*20000.0)/Drehzahl
+	
+	#laut Handbuch Fbr=Mbr/0.5Dsmax
+	
+
+	return (Drehzahl*Mbr*bremszeit)/(1.91e4),Mbr
+
 
 
 #n=linearAbnahme(2900,10,0)
 
 
-W=Reibkraft(pAnpress,AKlotz,nu)*friction_length(rInnen+radKlotz/2,n,5)
+W=Reibkraft(pAnpress,AKlotz,nu)*friction_length(rInnen+radKlotz/2,n,bremszeit)
 m=masse(rInnen,radKlotz,bBrake)
 T=W/(m*cScheibe)+StartTemperaturScheibe
-print(T)
+
+Wcross=CrossCheck(Pmotor,n,bremszeit)
+print(T,W,Wcross[0]*1e3)
+#Vergleich Anpresskräfte
+print(2*pAnpress*AKlotz,Wcross[1]/rBrake)
 
 
 
